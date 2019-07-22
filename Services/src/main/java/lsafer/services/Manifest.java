@@ -14,7 +14,7 @@ public abstract class Manifest {
     /**
      * class name that the plugin manifest should be.
      */
-    final public static String NAME = "lsafer.services.Manifest";
+    final public static String NAME = "lsafer.plugin.services.Manifest";
 
     /**
      * get all task parts in the aar file.
