@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="_textBootsStarting" tools:ignore="TypographyEllipsis">boots starting...</string>
+    <string name="_textCantStartDaemonsHost">can\'t start daemons</string>
+    <string name="_textDaemonsRunningInBackgroundTitle">%s running</string>
+    <string name="_textDaemonsRunningInBackgroundText">%i daemons running in background</string>
+    <string name="Daemons_Host">Daemons Host</string>
+    <string name="_textDaemonsHostNotificationChannelDescription">provides protection for daemons from system background killer</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="_textDaemonsStarted">%d daemons started</string>
+    <string name="_textDaemonsAlreadyStarted">%d daemons already started</string>
+    <string name="_textDaemonsKilled">%d daemons killed</string>
+    <string name="_textDaemonsBound">%d daemons bound</string>
+    <string name="_textBootsStarted">%d boots started</string>
+    <string name="_textNoContextException">no context exception %s</string>
+    <string name="_textNoPermissionWriteSystemSettings">need \"write system settings\" permission to work %s</string>
+    <string name="_textNoPermissionDisplayOverOtherApps" >need \"display over other apps\" permission to work %s</string>
+</resources>
