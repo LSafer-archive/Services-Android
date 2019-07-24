@@ -1,9 +1,9 @@
 package lsafer.services.io;
 
 import android.util.Log;
-import android.util.SparseArray;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import lsafer.io.FolderStructure;
 import lsafer.io.JSONFileStructure;
@@ -18,7 +18,7 @@ import lsafer.services.util.Arguments;
  * @since 14-Jul-19
  */
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue"})
-final public class Task extends FolderStructure {
+public class Task extends FolderStructure {
 
     /**
      * tag to print errors at.
@@ -28,7 +28,7 @@ final public class Task extends FolderStructure {
     /**
      * solved stems.
      */
-    final public SparseArray<TaskPart> $parts = new SparseArray<>();
+    final public List<TaskPart> $parts = new ArrayList<>();
 
     /**
      * the indexing file to run this.
@@ -38,33 +38,17 @@ final public class Task extends FolderStructure {
     @Override
     public void load() {
         super.load();
-
-        this.map().forEach((key, value) -> {
-            if (key instanceof String && value instanceof TaskPart) {
-                TaskPart part = ((TaskPart) value).clone(Reflect.getClass(((TaskPart) value).class_name, ((TaskPart) value).apk_path));
-                part.$index = configuration.indexing.indexOf(key);
-                part.$task = this;
-
-                if (part.$index != -1){
-                    this.$parts.put(part.$index, part);
-                }
-
-                this.put(key, part);
-            }
-        });
-
         int index = 0;
-        for (String name : this.configuration.indexing){
-            TaskPart part = this.get(name);
-            if (part == null) {
-                Log.e($TAG, "load: task part is indexed but not exist part_name=" + name + " part_index=" + index + " task.$remote=" + this.$remote);
-            } else {
+        for (String name : this.configuration.indexing)
+            if (this.typeOf(name) == TaskPart.class){
+                TaskPart part = this.get(name);
+                part = part.clone(Reflect.getClass(part.class_name, part.apk_path));
                 part.$task = this;
-                part.$index = index;
-                this.$parts.put(index, part);
-                index++;
+                part.$index = index++;
+                this.$parts.add(part);
+            } else {
+                Log.e("TAG", "load: task-part ["+name+"] not found, it's index ["+index+"] well be replaced with the next task-part");
             }
-        }
     }
 
     @Override

@@ -3,24 +3,24 @@ package lsafer.services.io;
 import android.util.Log;
 
 import java.util.Map;
-import java.lang.Object;
 
 import lsafer.io.File;
 import lsafer.io.JSONFileStructure;
-import lsafer.lang.JSON;
+import lsafer.json.JSON;
 import lsafer.services.annotation.Description;
 import lsafer.services.annotation.Parameters;
 import lsafer.services.annotation.Permissions;
 import lsafer.services.annotation.Values;
 import lsafer.services.util.Arguments;
 import lsafer.util.Arrays;
+import lsafer.util.MapStructure;
 import lsafer.util.Structure;
 
 /**
  * a structure to be overridden and used as a part of a {@link Task task}.
  * structure linked with {@link Map} as a secondary container
  * and {@link File JSON file} as a third IO container.
- * depends on {@link File#readJSON(Object)} (Object)} and {@link File#writeJSON(Object)}
+ * depends on {@link File#readJSON(Map)} (Object)} and {@link File#writeJSON(Map)}
  * <p>
  * make sure your {@link TaskPart task-part} matches all {@link JSONFileStructure json-file-structures} rules
  * <p>
@@ -71,7 +71,7 @@ public class TaskPart extends JSONFileStructure {
     /**
      * this stem's index.
      */
-    protected int $index;
+    protected Integer $index;
 
     /**
      * collection that have started this.
@@ -108,7 +108,7 @@ public class TaskPart extends JSONFileStructure {
      */
     public Arguments run(String name, String[] expected, Object... arguments) {
         try {
-            Arguments args = Arguments.newInstance(arguments);
+            Arguments args = Arguments.parse(arguments);
             java.lang.reflect.Method method = getClass().getMethod(name, Arguments.class);
             Parameters parameters = method.getAnnotation(Parameters.class);
 
@@ -152,7 +152,7 @@ public class TaskPart extends JSONFileStructure {
      * @version 2
      * @since 11-Jun-2019
      */
-    final public static class Properties extends Structure {
+    public static class Properties extends MapStructure {
 
         /**
          * class's description.
@@ -194,7 +194,7 @@ public class TaskPart extends JSONFileStructure {
          *
          * @param part to load data of
          */
-        private Properties(TaskPart part) {
+        public Properties(TaskPart part) {
             Class<? extends TaskPart> klass = part.getClass();
             Description description = klass.getAnnotation(Description.class);
             Permissions permissions = klass.getAnnotation(Permissions.class);
@@ -220,7 +220,7 @@ public class TaskPart extends JSONFileStructure {
         /**
          * a structure to review data about task part's field.
          */
-        final public static class Field extends Structure {
+        public static class Field extends MapStructure {
 
             /**
              * default value of the field.
@@ -258,7 +258,7 @@ public class TaskPart extends JSONFileStructure {
              * @param field  to get data from
              * @param object to get default value from
              */
-            private Field(java.lang.reflect.Field field, Object object) {
+            public Field(java.lang.reflect.Field field, Object object) {
                 Description description = field.getAnnotation(Description.class);
                 Values values = field.getAnnotation(Values.class);
 
@@ -283,7 +283,7 @@ public class TaskPart extends JSONFileStructure {
             /**
              * a structure to review data about task part field's value.
              */
-            final public static class Value extends Structure {
+            public static class Value extends MapStructure {
 
                 /**
                  * description of the value.
@@ -300,7 +300,7 @@ public class TaskPart extends JSONFileStructure {
                  *
                  * @param source to get data from
                  */
-                private Value(String source) {
+                public Value(String source) {
                     String[] s = source.split("[|]");
 
                     this.name = JSON.parse(s[0]);
@@ -324,7 +324,7 @@ public class TaskPart extends JSONFileStructure {
         /**
          * a structure to review data about task part's method.
          */
-        final public static class Method extends Structure {
+        public static class Method extends MapStructure {
 
             /**
              * description of the method.
@@ -361,7 +361,7 @@ public class TaskPart extends JSONFileStructure {
              *
              * @param method to get data from
              */
-            private Method(java.lang.reflect.Method method) {
+            public Method(java.lang.reflect.Method method) {
                 Parameters parameters = method.getAnnotation(Parameters.class);
                 Description description = method.getAnnotation(Description.class);
 

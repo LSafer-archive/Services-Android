@@ -9,12 +9,12 @@ import lsafer.services.io.TaskPart;
  * @version 1 alpha (19-Jul-19)
  * @since 19-Jul-19
  */
-public abstract class Manifest {
+public abstract class Index {
 
     /**
-     * class name that the plugin manifest should be.
+     * class name that the plugin's index class should have.
      */
-    final public static String NAME = "lsafer.plugin.services.Manifest";
+    final public static String NAME = "lsafer.services.plugin.Index";
 
     /**
      * get all task parts in the aar file.

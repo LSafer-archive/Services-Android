@@ -9,7 +9,7 @@ import lsafer.io.FolderStructure;
  * @version 1
  * @since 14-Jul-19
  */
-final public class Tasks extends FolderStructure {
+public class Tasks extends FolderStructure {
 
     /**
      * call a method in the first {@link TaskPart tast-part}

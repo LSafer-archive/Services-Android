@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 import lsafer.io.File;
-import lsafer.lang.Structurable;
+import lsafer.util.MapStructure;
 import lsafer.util.Structure;
 
 /**
@@ -14,7 +14,7 @@ import lsafer.util.Structure;
  * @version 4
  * @since 11 Jun 2019
  */
-public class Arguments extends Structure {
+public class Arguments extends MapStructure {
 
     /**
      * quick pass configuration.
@@ -62,12 +62,12 @@ public class Arguments extends Structure {
      * @param args to init this with
      * @return new of this with fields filled with the passed arguments
      */
-    public static Arguments newInstance(Object... args) {
+    public static Arguments parse(Object... args) {
         Arguments arguments = new Arguments();
 
         for (Object arg : args) {
-            if (arg instanceof Structurable)
-                arguments.putAll((Structurable) arg);
+            if (arg instanceof Structure)
+                arguments.putAll((Structure) arg);
             else if (arg instanceof Context)
                 arguments.context = (Context) arg;
 

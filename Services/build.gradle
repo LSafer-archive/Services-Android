@@ -32,12 +32,8 @@ android {
 
 }
 
-repositories {
-    maven { url "https://jitpack.io" }
-}
-
 dependencies {
-    compileOnly 'com.github.LSaferSE:LSafer:master'
+    compileOnly 'com.github.LSaferSE:LSafer:1.0.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 

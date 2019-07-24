@@ -5,4 +5,9 @@
     <string name="_textDaemonsRunningInBackgroundText">%i daemons running in background</string>
     <string name="Daemons_Host">Daemons Host</string>
     <string name="_textDaemonsHostNotificationChannelDescription">provides protection for daemons from system background killer</string>
+
+    <string name="_textFunctionsRunningInBackgroundText">some tasks is running in background</string>
+    <string name="_textFunctionsRunningInBackgroundTitle">Functions running in background</string>
+    <string name="_textFunctionsNotificationChannelDescription">display if there are any task function is running in the background</string>
+    <string name="_textBackgroundFunctionGroupStarted">%s functions group started</string>
 </resources>
