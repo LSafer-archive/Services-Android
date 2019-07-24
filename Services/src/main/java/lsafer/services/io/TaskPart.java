@@ -123,8 +123,7 @@ public class TaskPart extends JSONFileStructure {
                     Log.e($TAG, "run: method " + name + " don't returns all of " + java.util.Arrays.toString(expected), null);
             }
 
-            Arguments output = (Arguments) method.invoke(this, args);
-            return output == null ? new Arguments() : output;
+            return Arguments.parse(method.invoke(this, args));
         } catch (Exception e) {
             Log.e($TAG, "run: an error occurred while invoking " + name + " in the task part " + this.getClass() + " index=" + $index + " task=" + $task, e);
         }

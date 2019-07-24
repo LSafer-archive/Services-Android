@@ -85,6 +85,18 @@ final public class BroadcastReceiver extends android.content.BroadcastReceiver {
         return receiver;
     }
 
+    /**
+     * add a function to a broadcast receiver that matches the given action.
+     *
+     * @param context the context to add the receiver on
+     * @param action the action name to listen to
+     * @param functions to do when the given action occurred
+     */
+    @SafeVarargs
+    public static void addFunctions(Context context, String action, Function<Arguments, ?>... functions) {
+        getInstance(context, action).addFunctions(functions);
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction() != null)

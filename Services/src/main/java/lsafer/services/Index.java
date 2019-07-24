@@ -14,7 +14,7 @@ public abstract class Index {
     /**
      * class name that the plugin's index class should have.
      */
-    final public static String NAME = "lsafer.services.plugin.Index";
+    final public static String NAME = "lsafer.plugin.services.Index";
 
     /**
      * get all task parts in the aar file.
