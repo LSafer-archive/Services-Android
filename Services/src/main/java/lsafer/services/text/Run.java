@@ -8,7 +8,7 @@ package lsafer.services.text;
  * @version 1 alpha (25-Jul-19)
  * @since 25-Jul-19
  */
-final public class Function {
+final public class Run {
     /**
      * get the position of the task part.
      */
