@@ -18,6 +18,8 @@ release/
 # Gradle files
 .gradle/
 build/
+
+#android studio files
 /.idea
 
 # Local configuration file (sdk path, etc)

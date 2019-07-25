@@ -1,13 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="_textBootsStarting" tools:ignore="TypographyEllipsis">boots starting...</string>
-    <string name="_textCantStartDaemonsHost">can\'t start daemons</string>
-    <string name="_textDaemonsRunningInBackgroundTitle">%s running</string>
-    <string name="_textDaemonsRunningInBackgroundText">%i daemons running in background</string>
-    <string name="Daemons_Host">Daemons Host</string>
-    <string name="_textDaemonsHostNotificationChannelDescription">provides protection for daemons from system background killer</string>
-
-    <string name="_textFunctionsRunningInBackgroundText">some tasks is running in background</string>
-    <string name="_textFunctionsRunningInBackgroundTitle">Functions running in background</string>
-    <string name="_textFunctionsNotificationChannelDescription">display if there are any task function is running in the background</string>
-    <string name="_textBackgroundFunctionGroupStarted">%s functions group started</string>
+<resources>
+    <string name="_functions_running_in_background_text">some tasks is running in background</string>
+    <string name="_functions_running_in_background_title">Functions running in background</string>
+    <string name="_functions_running_in_background_channel_description">display if there are any task function is running in the background</string>
+    <string name="_functions_running_in_background_toast">%s functions group started</string>
 </resources>

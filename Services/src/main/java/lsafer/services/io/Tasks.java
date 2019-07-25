@@ -12,6 +12,15 @@ import lsafer.io.FolderStructure;
 public class Tasks extends FolderStructure {
 
     /**
+     * init this.
+     *
+     * @param arguments to init with
+     */
+    public Tasks(Object... arguments){
+        super(arguments);
+    }
+
+    /**
      * call a method in the first {@link TaskPart tast-part}
      * foreach {@link Task task} in this.
      *

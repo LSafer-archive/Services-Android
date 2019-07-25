@@ -18,7 +18,12 @@ release/
 # Gradle files
 .gradle/
 build/
+
+#android studio files
 /.idea
+
+#bat files
+build.bat
 
 # Local configuration file (sdk path, etc)
 local.properties

@@ -1,13 +1,10 @@
 package lsafer.services.io;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import lsafer.io.FolderStructure;
 import lsafer.io.JSONFileStructure;
-import lsafer.services.lang.Reflect;
 import lsafer.services.util.Arguments;
 
 /**
@@ -21,34 +18,30 @@ import lsafer.services.util.Arguments;
 public class Task extends FolderStructure {
 
     /**
-     * tag to print errors at.
-     */
-    final public String $TAG = "Services Task";
-
-    /**
      * solved stems.
      */
     final public List<TaskPart> $parts = new ArrayList<>();
-
     /**
      * the indexing file to run this.
      */
     public Configuration configuration = new Configuration();
+
+    /**
+     * init this.
+     *
+     * @param arguments to init with
+     */
+    public Task(Object... arguments) {
+        super(arguments);
+    }
 
     @Override
     public void load() {
         super.load();
         int index = 0;
         for (String name : this.configuration.indexing)
-            if (this.typeOf(name) == TaskPart.class){
-                TaskPart part = this.get(name);
-                part = part.clone(Reflect.getClass(part.class_name, part.apk_path));
-                part.$task = this;
-                part.$index = index++;
-                this.$parts.add(part);
-            } else {
-                Log.e("TAG", "load: task-part ["+name+"] not found, it's index ["+index+"] well be replaced with the next task-part");
-            }
+            if (this.typeOf(name) == TaskPart.class)
+                this.$parts.add((TaskPart) this.put(name, this.<TaskPart>get(name).initialize(this, index)));
     }
 
     @Override
@@ -76,23 +69,29 @@ public class Task extends FolderStructure {
     /**
      * the indexing file to run this.
      */
-    final public static class Configuration extends JSONFileStructure {
+    public static class Configuration extends JSONFileStructure {
 
         /**
          * whether this task is activated or not.
          */
         public Boolean activated = false;
-
         /**
          * stems list to run accordingly.
          */
         public ArrayList<String> indexing = new ArrayList<>();
-
         /**
          * name of the task.
          */
         public String name = "task";
 
+        /**
+         * init this.
+         *
+         * @param arguments to init with
+         */
+        public Configuration(Object... arguments) {
+            super(arguments);
+        }
     }
 
 }

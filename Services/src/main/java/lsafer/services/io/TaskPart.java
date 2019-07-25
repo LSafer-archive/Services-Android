@@ -11,6 +11,7 @@ import lsafer.services.annotation.Description;
 import lsafer.services.annotation.Parameters;
 import lsafer.services.annotation.Permissions;
 import lsafer.services.annotation.Values;
+import lsafer.services.lang.Reflect;
 import lsafer.services.util.Arguments;
 import lsafer.util.Arrays;
 import lsafer.util.MapStructure;
@@ -25,38 +26,12 @@ import lsafer.util.Structure;
  * make sure your {@link TaskPart task-part} matches all {@link JSONFileStructure json-file-structures} rules
  * <p>
  *
- *
  * @author LSaferSE
  * @version 6
  * @since 10 Jun 2019
  */
 @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
 public class TaskPart extends JSONFileStructure {
-
-    /**
-     * get data.
-     */
-    final public static String $GET = "get";
-
-    /**
-     * run the main script.
-     */
-    final public static String $START = "start";
-
-    /**
-     * revers run effect.
-     */
-    final public static String $STOP = "stop";
-
-    /**
-     * update this.
-     */
-    final public static String $UPDATE = "update";
-
-    /**
-     * to print errors at.
-     */
-    final public static String $TAG = "Services Task Part";
 
     /**
      * the path of the apk that contains this class.
@@ -113,22 +88,39 @@ public class TaskPart extends JSONFileStructure {
             Parameters parameters = method.getAnnotation(Parameters.class);
 
             if (parameters == null)
-                Log.e($TAG, "run: no Parameters annotation on " + name + " method in " + getClass());
+                Log.e("Services Task Part", "run: no Parameters annotation on " + name + " method in " + getClass());
             else {
                 for (String param : parameters.input())
                     if (!args.containsKey(param))
-                        Log.e($TAG, "run: " + param + " parameter is needed to invoke " + name);
+                        Log.e("Services Task Part", "run: " + param + " parameter is needed to invoke " + name);
 
                 if (expected != null && !Arrays.all(parameters.output(), expected))
-                    Log.e($TAG, "run: method " + name + " don't returns all of " + java.util.Arrays.toString(expected), null);
+                    Log.e("Services Task Part", "run: method " + name + " don't returns all of " + java.util.Arrays.toString(expected), null);
             }
 
             return Arguments.parse(method.invoke(this, args));
         } catch (Exception e) {
-            Log.e($TAG, "run: an error occurred while invoking " + name + " in the task part " + this.getClass() + " index=" + $index + " task=" + $task, e);
+            Log.e("Services Task Part", "run: an error occurred while invoking " + name + " in the task part " + this.getClass() + " index=" + $index + " task=" + $task, e);
         }
 
         return new Arguments();
+    }
+
+    /**
+     * initialize this by cloning it to a class
+     * with a name of {@link #class_name} and setting
+     * the index of the clone with the given index also
+     * it's parent task with the given task.
+     *
+     * @param parent the parent task of this part
+     * @param index of this part
+     * @return this with the class on {@link #class_name}
+     */
+    public TaskPart initialize(Task parent, int index){
+        TaskPart part = this.clone(Reflect.getClass(class_name, apk_path));
+        part.$task = parent;
+        part.$index = index;
+        return part;
     }
 
     /**
@@ -139,7 +131,7 @@ public class TaskPart extends JSONFileStructure {
      * @param arguments to pass
      * @return arguments that have returned from the method
      */
-    public Arguments next(String name, String[] expected, Object... arguments) {
+    protected Arguments next(String name, String[] expected, Object... arguments) {
         return $task.run($index + 1, name, expected, arguments);
 
     }

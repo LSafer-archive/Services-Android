@@ -33,7 +33,7 @@ import lsafer.services.util.Arguments;
  * @version 1 alpha (24-Jul-19)
  * @since 24-Jul-19
  */
-public class ForegroundService extends Service {
+final public class ForegroundService extends Service {
 
     /**
      * map of the functions groups and it's ids.
@@ -107,18 +107,18 @@ public class ForegroundService extends Service {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("background-functions", "Background Functions", NotificationManager.IMPORTANCE_NONE);
-            channel.setDescription(this.getString(R.string._textFunctionsNotificationChannelDescription));
+            channel.setDescription(this.getString(R.string._functions_running_in_background_channel_description));
             //noinspection ConstantConditions
             this.getSystemService(NotificationManager.class).createNotificationChannel(channel);
         }
         this.startForeground(1, new NotificationCompat.Builder(this, "background-functions")
                 .setSmallIcon(R.drawable.icon_sync)
-                .setContentTitle(this.getString(R.string._textFunctionsRunningInBackgroundTitle))
-                .setContentText(this.getString(R.string._textFunctionsRunningInBackgroundText))
+                .setContentTitle(this.getString(R.string._functions_running_in_background_title))
+                .setContentText(this.getString(R.string._functions_running_in_background_text))
                 .setPriority(NotificationCompat.PRIORITY_MIN)
                 .build());
 
-        Toast.makeText(this, this.getString(R.string._textBackgroundFunctionGroupStarted, group), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, this.getString(R.string._functions_running_in_background_toast, group), Toast.LENGTH_LONG).show();
         return START_STICKY;
     }
 

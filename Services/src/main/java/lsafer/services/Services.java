@@ -20,7 +20,7 @@ final public class Services {
     /**
      * to avoid repetitive initializes.
      */
-    private static boolean mInitialized = false;
+    private static boolean initialized = false;
 
     /**
      * initialize the library.
@@ -28,11 +28,11 @@ final public class Services {
      * @param args to initialize with
      */
     public static void initialize(Object... args) {
-        if (!mInitialized) {
+        if (!initialized) {
             Arguments arguments = Arguments.parse(args);
 
             PrivateCache = new File(arguments.context.getApplicationContext().getCodeCacheDir());
-            mInitialized = true;
+            initialized = true;
         }
     }
 
