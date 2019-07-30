@@ -13,9 +13,8 @@ import lsafer.services.annotation.Permissions;
 import lsafer.services.annotation.Values;
 import lsafer.services.lang.Reflect;
 import lsafer.services.util.Arguments;
+import lsafer.util.AbstractStructure;
 import lsafer.util.Arrays;
-import lsafer.util.MapStructure;
-import lsafer.util.Structure;
 
 /**
  * a structure to be overridden and used as a part of a {@link Task task}.
@@ -32,6 +31,37 @@ import lsafer.util.Structure;
  */
 @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
 public class TaskPart extends JSONFileStructure {
+
+    /*
+    //your task part should be like :
+    //you need to add the modifier "static"
+    //to your class if it's an inner-class
+    //don't forget to add your class to your lsafer.services.Index class
+    @Description("a description for this task part")
+    @Permissions({"permission 1", "permission 2"})
+    public class MyTaskPart extends TaskPart {
+
+        //this field WELL be stored when method save() get called
+        //also it'll be loaded from the storage when method load() get called
+        @Description("a description for what this field would be used for")
+        @Values({"value1|description", "value2|description", "%|custom values allowed"})
+        public String stored_data_1 = "default value";
+
+        //this field will be ignored from Structure
+        //interface that this class is inhering (all because it have the character '$' on it's name)
+        //so it wouldn't be stored or cloned (even if it's a public field)
+        //and no one can get it unless YOU allow that by your code
+        private String $cache_data = null;
+
+        //this method will be called when the previous task-part calls lsafer.services.text.Run.get
+        @Description("a description for what this method would do when it get called")
+        @Parameters(input="string", output="boolean")
+        public Boolean get(Arguments arguments){
+            return arguments.string == stored_data_1 && $cache_data != null;
+        }
+
+    }
+    */
 
     /**
      * the path of the apk that contains this class.
@@ -143,42 +173,32 @@ public class TaskPart extends JSONFileStructure {
      * @version 2
      * @since 11-Jun-2019
      */
-    public static class Properties extends MapStructure {
+    public static class Properties extends AbstractStructure {
 
         /**
          * class's description.
          */
-        public String description = "";
+        public String description;
 
         /**
          * fields of the class.
          */
-        public Field[] fields = {};
+        public Field[] fields;
 
         /**
          * methods to invoke inside the class.
          */
-        public Method[] methods = {};
+        public Method[] methods;
 
         /**
          * name of the class.
          */
-        public String name = "";
+        public String name;
 
         /**
          * permission the class needs.
          */
-        public String[] permissions = {};
-
-        /**
-         * for {@link Structure}.
-         *
-         * @param arguments to pass to super.
-         */
-        public Properties(Object... arguments) {
-            super(arguments);
-
-        }
+        public String[] permissions;
 
         /**
          * load data from the given class.
@@ -199,10 +219,12 @@ public class TaskPart extends JSONFileStructure {
             this.permissions = permissions.value();
             this.description = description.value();
 
+            //declaring fields
             this.fields = new Field[fields.length];
             for (int i = 0; i < fields.length; i++)
                 this.fields[i] = new Field(fields[i], part);
 
+            //declaring methods
             this.methods = new Method[methods.length];
             for (int i = 0; i < methods.length; i++)
                 this.methods[i] = new Method(methods[i]);
@@ -211,7 +233,7 @@ public class TaskPart extends JSONFileStructure {
         /**
          * a structure to review data about task part's field.
          */
-        public static class Field extends MapStructure {
+        public static class Field extends AbstractStructure {
 
             /**
              * default value of the field.
@@ -221,27 +243,17 @@ public class TaskPart extends JSONFileStructure {
             /**
              * description of the field.
              */
-            public String description = "";
+            public String description;
 
             /**
              * name of the field.
              */
-            public String name = "";
+            public String name;
 
             /**
              * allowed values of the field.
              */
-            public Value[] values = {};
-
-            /**
-             * to init this.
-             *
-             * @param arguments to init with
-             */
-            public Field(Object... arguments) {
-                super(arguments);
-
-            }
+            public Value[] values;
 
             /**
              * fill this with the given field's properties.
@@ -274,7 +286,7 @@ public class TaskPart extends JSONFileStructure {
             /**
              * a structure to review data about task part field's value.
              */
-            public static class Value extends MapStructure {
+            public static class Value extends AbstractStructure {
 
                 /**
                  * description of the value.
@@ -315,7 +327,7 @@ public class TaskPart extends JSONFileStructure {
         /**
          * a structure to review data about task part's method.
          */
-        public static class Method extends MapStructure {
+        public static class Method extends AbstractStructure {
 
             /**
              * description of the method.

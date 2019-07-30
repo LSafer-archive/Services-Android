@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 import lsafer.io.File;
-import lsafer.util.MapStructure;
+import lsafer.util.AbstractStructure;
 import lsafer.util.Structure;
 
 /**
@@ -14,7 +14,7 @@ import lsafer.util.Structure;
  * @version 4
  * @since 11 Jun 2019
  */
-public class Arguments extends MapStructure {
+public class Arguments extends AbstractStructure {
 
     /**
      * quick pass configuration.

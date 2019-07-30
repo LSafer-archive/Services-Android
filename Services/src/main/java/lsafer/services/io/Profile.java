@@ -1,6 +1,7 @@
 package lsafer.services.io;
 
 import lsafer.io.FolderStructure;
+import lsafer.io.IOStructure;
 
 /**
  * a tasks folder structure.
@@ -9,14 +10,14 @@ import lsafer.io.FolderStructure;
  * @version 1
  * @since 14-Jul-19
  */
-public class Tasks extends FolderStructure {
+public class Profile extends FolderStructure {
 
     /**
      * init this.
      *
      * @param arguments to init with
      */
-    public Tasks(Object... arguments){
+    public Profile(Object... arguments){
         super(arguments);
     }
 
@@ -35,13 +36,14 @@ public class Tasks extends FolderStructure {
     }
 
     @Override
-    public void load() {
+    public <I extends IOStructure> I load() {
         super.load();
         this.map().forEach((key, value) -> {
             if (key instanceof String && value instanceof Task)
                 if (!((Task) value).configuration.activated)
                     this.remove(value);
         });
+        return (I) this;
     }
 
     @Override

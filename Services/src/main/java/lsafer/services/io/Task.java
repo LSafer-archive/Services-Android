@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lsafer.io.FolderStructure;
+import lsafer.io.IOStructure;
 import lsafer.io.JSONFileStructure;
 import lsafer.services.util.Arguments;
 
@@ -36,12 +37,13 @@ public class Task extends FolderStructure {
     }
 
     @Override
-    public void load() {
+    public <I extends IOStructure> I load() {
         super.load();
         int index = 0;
         for (String name : this.configuration.indexing)
             if (this.typeOf(name) == TaskPart.class)
                 this.$parts.add((TaskPart) this.put(name, this.<TaskPart>get(name).initialize(this, index)));
+        return (I) this;
     }
 
     @Override
