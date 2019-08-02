@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    compileOnly 'com.github.LSaferSE:LSafer:1.0.4-alpha8'
+    compileOnly 'com.github.LSaferSE:LSafer:1.0.4-beta1'
     compileOnly internal('aunionx.libraries.LSaferSE:LSafer-Android@aar')
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])

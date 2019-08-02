@@ -101,7 +101,7 @@ final public class ForegroundService extends Service {
 
         if (functions != null) {
             for (Function<Arguments, ?> function : functions)
-                function.apply(Arguments.parse(this, intent, group));
+                function.apply(new Arguments(this, intent, group));
             ForegroundService.functions.remove(group);
         }
 

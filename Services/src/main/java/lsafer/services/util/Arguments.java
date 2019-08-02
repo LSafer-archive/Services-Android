@@ -47,35 +47,23 @@ public class Arguments extends AbstractStructure {
     public Structure structure;
 
     /**
-     * init this.
+     * initialize this with the given arguments included
+     * each argument will be mapped accordingly to it's
+     * class's simple name (lower case) ex. Context -> context.
      *
-     * @param args no-use
+     * @param arguments to be mapped
      */
-    public Arguments(Object... args) {
-        super(args);
+    public Arguments(Object... arguments) {
+        for (Object argument : arguments)
+            if (argument != null) {
+                if (argument instanceof Structure)
+                    this.putAll((Structure) argument);
 
-    }
+                if (argument instanceof Context)
+                    this.put("context", argument);
 
-    /**
-     * to get new pre-resolved fields instance of this.
-     *
-     * @param args to init this with
-     * @return new of this with fields filled with the passed arguments
-     */
-    public static Arguments parse(Object... args) {
-        Arguments arguments = new Arguments();
-
-        for (Object arg : args) {
-            if (arg instanceof Structure)
-                arguments.putAll((Structure) arg);
-            else if (arg instanceof Context)
-                arguments.context = (Context) arg;
-
-            if (arg != null)
-                arguments.put(arg.getClass().getSimpleName().toLowerCase(), arg);
-        }
-
-        return arguments;
+                this.put(argument.getClass().getSimpleName().toLowerCase(), argument);
+            }
     }
 
 }

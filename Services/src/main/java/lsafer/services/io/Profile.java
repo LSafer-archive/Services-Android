@@ -1,7 +1,13 @@
 package lsafer.services.io;
 
+import android.content.Context;
+
+import java.util.Map;
+
 import lsafer.io.FolderStructure;
-import lsafer.io.IOStructure;
+import lsafer.io.JSONFileStructure;
+import lsafer.lang.AndroidReflect;
+import lsafer.util.Structure;
 
 /**
  * a tasks folder structure.
@@ -13,16 +19,7 @@ import lsafer.io.IOStructure;
 public class Profile extends FolderStructure {
 
     /**
-     * init this.
-     *
-     * @param arguments to init with
-     */
-    public Profile(Object... arguments){
-        super(arguments);
-    }
-
-    /**
-     * call a method in the first {@link TaskPart tast-part}
+     * call a method in the first {@link Task.Part tast-part}
      * foreach {@link Task task} in this.
      *
      * @param name      of the method
@@ -30,26 +27,29 @@ public class Profile extends FolderStructure {
      */
     final public void run(String name, Object... arguments) {
         this.map().forEach((key, value) -> {
-            if (key instanceof String && value instanceof Task)
-                ((Task) value).run(0, name, null, arguments);
+            if (value instanceof Task)
+                ((Task) value).invoke(0, name, null, arguments);
         });
     }
 
-    @Override
-    public <I extends IOStructure> I load() {
-        super.load();
+    /**
+     * initialize tasks of this.
+     *
+     * @param context of application
+     */
+    public void initialize(Context context) {
         this.map().forEach((key, value) -> {
-            if (key instanceof String && value instanceof Task)
-                if (!((Task) value).configuration.activated)
-                    this.remove(value);
+            if (value instanceof JSONFileStructure) {
+                Map<Object, Object> task_map = ((JSONFileStructure) value).map();
+
+                if ((boolean) task_map.get("activated")) {
+                    Class<? extends Task> task_class = AndroidReflect.getClass(context, (String) task_map.get("class_name"), (String) task_map.get("apk_path"));
+                    Task task = Structure.newInstance(task_class);
+                    task.initialize(context, this);
+                    this.put(key, task);
+                }
+            }
         });
-        return (I) this;
-    }
-
-    @Override
-    public Class<Task> folder_structure() {
-        return Task.class;
-
     }
 
 }

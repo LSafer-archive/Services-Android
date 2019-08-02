@@ -2,7 +2,6 @@ package lsafer.services.util;
 
 import lsafer.services.io.Profile;
 import lsafer.services.io.Task;
-import lsafer.services.io.TaskPart;
 
 /**
  * manifest of properties in the plugin.
@@ -23,7 +22,7 @@ public abstract class Index {
      *
      * @return all task parts in the apk file
      */
-    public abstract TaskPart[] getTaskParts();
+    public abstract Task.Part[] getTaskParts();
 
     /**
      * get all tasks in the apk file of the plugin that implements the services library.
