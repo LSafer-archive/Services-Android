@@ -6,6 +6,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import lsafer.io.File;
 import lsafer.io.JSONFileStructure;
@@ -74,15 +75,19 @@ public class Task extends JSONFileStructure {
      *
      * @param context the context of application
      * @param parent  the profile of this task
+     * @param <T>     this
+     * @return this
      */
-    public void initialize(Context context, Profile parent) {
-        for (int i = 0; i < this.parts.size(); i++) {
-            Map<String, String> part_map = (Map<String, String>) this.parts.get(i);
-            Class<? extends Part> part_class = AndroidReflect.getClass(context, part_map.get("class_name"), part_map.get("class_apk"));
-            Part part = Structure.newInstance(part_class);
-            part.initialize(context, parent, this, i);
-            this.parts.set(i, part);
-        }
+    public <T extends Task> T initialize(Context context, Profile parent) {
+        int[] index = {0};
+        //noinspection unchecked
+        this.parts.replaceAll((UnaryOperator) old ->
+                Structure.<Part>newInstance(AndroidReflect.getClass(context,
+                        ((Map<String, String>) old).get("class_name"),
+                        ((Map<String, String>) old).get("apk_path")))
+                        .initialize(context, parent, this, index[0]++)
+                        .putAll((Map<?, ?>) old));
+        return (T) this;
     }
 
     /**
@@ -122,7 +127,7 @@ public class Task extends JSONFileStructure {
      */
     @Description("default task-part")
     @Permissions({""})
-    public class Part extends AbstractStructure {
+    public static class Part extends AbstractStructure {
         //
         //    your task part should be like :
         //    you need to add the modifier "static"
@@ -193,11 +198,14 @@ public class Task extends JSONFileStructure {
          * @param profile the profile of the parent task of this
          * @param task    the parent task of this part
          * @param index   of this part
+         * @param <P>     this
+         * @return this
          */
-        public void initialize(Context context, Profile profile, Task task, int index) {
+        public <P extends Part> P initialize(Context context, Profile profile, Task task, int index) {
             this.$profile = profile;
             this.$task = task;
             this.$index = index;
+            return (P) this;
         }
 
         /**

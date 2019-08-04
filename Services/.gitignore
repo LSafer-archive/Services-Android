@@ -22,6 +22,10 @@ build/
 #android studio files
 /.idea
 
+#else
+LSafer.jar
+LSafer-Android.aar
+
 # Local configuration file (sdk path, etc)
 local.properties
 
