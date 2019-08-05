@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
@@ -20,6 +19,7 @@ import java.util.function.Function;
 
 import lsafer.services.R;
 import lsafer.services.util.Arguments;
+import lsafer.util.Strings;
 
 /**
  * a class to support task-parts from plugins to be able to
@@ -41,38 +41,9 @@ final public class ForegroundService extends Service {
     final private static Map<String, List<Function<Arguments, ?>>> functions = new HashMap<>();
 
     /**
-     * add the passed functions from the targeted functions group.
      *
-     * @param group     the name of the targeted functions group to add the passed functions to
-     * @param functions the functions list to add to the targeted functions group
      */
-    @SafeVarargs
-    public static void addFunctions(String group, Function<Arguments, ?>... functions) {
-        List<Function<Arguments, ?>> list = ForegroundService.functions.get(group);
-
-        if (list == null)
-            ForegroundService.functions.put(group, list = new ArrayList<>());
-
-        list.addAll(Arrays.asList(functions));
-    }
-
-    /**
-     * remove the passed functions from the targeted functions group.
-     *
-     * @param group     the name of the targeted functions group to remove the passed functions from
-     * @param functions the functions list to remove from the targeted functions group
-     */
-    @SafeVarargs
-    public static void removeFunctions(String group, Function<Arguments, ?>... functions) {
-        List<Function<Arguments, ?>> list = ForegroundService.functions.get(group);
-
-        if (list != null) {
-            list.removeAll(Arrays.asList(functions));
-
-            if (list.size() == 0)
-                ForegroundService.functions.remove(group);
-        }
-    }
+    final private static Map<String, Integer> groups = new HashMap<>();
 
     /**
      * start the service and run all functions in the passed group.
@@ -86,6 +57,7 @@ final public class ForegroundService extends Service {
         if (ForegroundService.functions.containsKey(group))
             ForegroundService.functions.get(group).addAll(Arrays.asList(functions));
         else ForegroundService.functions.put(group, new ArrayList<>(Arrays.asList(functions)));
+        ForegroundService.groups.put(group, ForegroundService.groups.getOrDefault(group, 0) + functions.length);
 
         Intent intent = new Intent(context, ForegroundService.class);
         intent.putExtra("group", group);
@@ -99,11 +71,9 @@ final public class ForegroundService extends Service {
         String group = intent.getStringExtra("group");
         List<Function<Arguments, ?>> functions = ForegroundService.functions.get(group);
 
-        if (functions != null) {
-            for (Function<Arguments, ?> function : functions)
-                function.apply(new Arguments(this, intent, group));
-            ForegroundService.functions.remove(group);
-        }
+        for (Function<Arguments, ?> function : functions)
+            function.apply(new Arguments(this, intent, group));
+        functions.clear();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("background-functions", "Background Functions", NotificationManager.IMPORTANCE_NONE);
@@ -113,12 +83,12 @@ final public class ForegroundService extends Service {
         }
         this.startForeground(1, new NotificationCompat.Builder(this, "background-functions")
                 .setSmallIcon(R.drawable.icon_sync)
-                .setContentTitle(this.getString(R.string._functions_running_in_background_title))
-                .setContentText(this.getString(R.string._functions_running_in_background_text))
+                .setContentTitle(this.getString(R.string._functions_running_in_background_title, groups.size()))
+                .setContentText(Strings.crop(ForegroundService.groups.toString(), 1,1)
+                        .replace(",", "\n").replace("=", ": "))
                 .setPriority(NotificationCompat.PRIORITY_MIN)
                 .build());
 
-        Toast.makeText(this, this.getString(R.string._functions_running_in_background_toast, group), Toast.LENGTH_LONG).show();
         return START_STICKY;
     }
 

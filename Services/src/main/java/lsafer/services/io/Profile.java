@@ -2,14 +2,11 @@ package lsafer.services.io;
 
 import android.content.Context;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
 import lsafer.io.FileStructure;
 import lsafer.io.FolderStructure;
 import lsafer.io.JSONFileStructure;
 import lsafer.lang.AndroidReflect;
+import lsafer.util.Structure;
 
 /**
  * a tasks folder structure.
@@ -18,31 +15,18 @@ import lsafer.lang.AndroidReflect;
  * @version 1
  * @since 14-Jul-19
  */
+@SuppressWarnings("WeakerAccess")
 public class Profile extends FolderStructure {
 
     /**
-     * all profiles instances map.
+     * the public status of this profile.
      */
-    final private static Map<String, Profile> $profiles = new HashMap<>();
+    public String $status = "init";
 
     /**
-     * get a profile instance.
-     *
-     * the main purpose of this is to manage
-     * instancing profiles.
-     *
-     * @param key of the profile
-     * @param defaultValue case not found
-     * @return the linked profile instance of the given key, or the given default value case the profile not found
+     * whether this profile is initialized or not.
      */
-    public static Profile getInstance(String key, Function<?, Profile> defaultValue){
-        Profile profile = Profile.$profiles.get(key);
-        if (profile == null){
-            profile = defaultValue.apply(null);
-            Profile.$profiles.put(key, profile);
-        }
-        return profile;
-    }
+    public boolean $initialized = false;
 
     @Override
     public Class<? extends FileStructure> file_structure() {
@@ -63,8 +47,15 @@ public class Profile extends FolderStructure {
                                 value.get("class_name", (k) -> Task.class.getName()),
                                 value.get("apk_path", (k) -> "")))
                                 .initialize(context, this)
-                        : null);
+                        : value);
+        this.$initialized = true;
         return (P) this;
+    }
+
+    @Override
+    public <S extends Structure> S reset() {
+        $initialized = false;
+        return super.reset();
     }
 
     /**
@@ -75,7 +66,11 @@ public class Profile extends FolderStructure {
      * @param arguments to pass
      */
     public void run(String name, Object... arguments) {
-        this.forEach((Object key, Task value) -> value.invoke(0, name, null, arguments));
+        this.$status = name;
+        this.forEach((Object key, Object value) -> {
+            if (value instanceof Task)
+                ((Task) value).invoke(0, name, null, arguments);
+        });
     }
 
 }

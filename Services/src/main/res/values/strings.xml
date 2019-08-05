@@ -1,6 +1,5 @@
 <resources>
-    <string name="_functions_running_in_background_text">some tasks is running in background</string>
-    <string name="_functions_running_in_background_title">Functions running in background</string>
+    <string name="_functions_running_in_background_title">%d function groups running in background</string>
     <string name="_functions_running_in_background_channel_description">display if there are any task function is running in the background</string>
     <string name="_functions_running_in_background_toast">%s functions group started</string>
 </resources>
