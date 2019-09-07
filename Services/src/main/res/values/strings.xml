@@ -1,5 +1,21 @@
 <resources>
-    <string name="_functions_running_in_background_title">%d function groups running in background</string>
-    <string name="_functions_running_in_background_channel_description">display if there are any task function is running in the background</string>
-    <string name="_functions_running_in_background_toast">%s functions group started</string>
+    <string name="_Chain__description">base, the chain that links the processes together</string>
+    <string name="_Chain__activated__description">whether this chain is activated or not</string>
+    <string-array name="_Chain__activated__values__description">
+        <item>chain activated</item>
+        <item>chain deactivated</item>
+    </string-array>
+
+    <string name="_Process__description">base</string>
+    <string name="_Process__service_class__description">the class of this process\'s service</string>
+    <string name="_Process__service_package__description">the class of this process\'s application package</string>
+
+    <string name="txt__description_service_channel">
+        this notification allows the AUS Service to stick in the background
+    </string>
+    <string name="txt__service_notification_text">running in the background</string>
+
+    <string name="txt__description_invoke_permission">Grant this application to Invoke AUS Services</string>
+
+    <string name="abs__Properties_Gatherer">Properties Gatherer</string>
 </resources>

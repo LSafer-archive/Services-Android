@@ -1,69 +1,40 @@
 package lsafer.services.util;
 
-import android.content.Context;
-import android.content.res.Configuration;
+import android.os.Bundle;
+import lsafer.util.ExtraStructure;
+import lsafer.util.HashStructure;
 
-import lsafer.io.File;
-import lsafer.util.AbstractStructure;
-import lsafer.util.Structure;
+import java.io.Serializable;
+import java.util.Locale;
 
 /**
- * main passing arguments bundle.
+ * A hash-structure that uses as a bundle in Services library.
  *
  * @author LSaferSE
- * @version 4
+ * @version 5 release (07-Sep-2019)
  * @since 11 Jun 2019
  */
-public class Arguments extends AbstractStructure {
-
+@SuppressWarnings("WeakerAccess")
+public class Arguments extends HashStructure implements ExtraStructure, Serializable {
     /**
-     * quick pass configuration.
-     */
-    public Configuration configuration;
-
-    /**
-     * quick pass context.
-     */
-    public Context context;
-
-    /**
-     * quick pass file.
-     */
-    public File file;
-
-    /**
-     * quick pass integer.
-     */
-    public Integer integer;
-
-    /**
-     * quick pass string.
-     */
-    public String string;
-
-    /**
-     * quick pass parent structure.
-     */
-    public Structure structure;
-
-    /**
-     * initialize this with the given arguments included
-     * each argument will be mapped accordingly to it's
-     * class's simple name (lower case) ex. Context -> context.
+     * Initialize this with the given arguments. Each argument will be mapped accordingly to it's class's simple name (lower case).
+     * unless it's an {@link Arguments arguments object} or {@link Bundle bundle object} then it'll be put all in this.
+     *
+     * <br><br><b>example:</b>
+     * <pre>
+     *     Integer 0    -> put("integer", 0)
+     *     Boolean true -> put("boolean", true)
+     * </pre>
      *
      * @param arguments to be mapped
      */
     public Arguments(Object... arguments) {
         for (Object argument : arguments)
-            if (argument != null) {
-                if (argument instanceof Structure)
-                    this.putAll((Structure) argument);
-
-                if (argument instanceof Context)
-                    this.put("context", argument);
-
-                this.put(argument.getClass().getSimpleName().toLowerCase(), argument);
-            }
+            if (argument instanceof Arguments)
+                this.putAll((Arguments) argument);
+            else if (argument instanceof Bundle)
+                this.putAll((Bundle) argument);
+            else if (argument != null)
+                this.put(argument.getClass().getSimpleName().toLowerCase(Locale.US), argument);
     }
-
 }

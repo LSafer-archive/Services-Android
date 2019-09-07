@@ -1,243 +1,343 @@
 package lsafer.services.util;
 
+import android.content.res.Resources;
+import lsafer.services.annotation.Controller;
+import lsafer.util.HashStructure;
 
-import lsafer.json.JSON;
-import lsafer.services.annotation.Description;
-import lsafer.services.annotation.Parameters;
-import lsafer.services.annotation.Permissions;
-import lsafer.services.annotation.Values;
-import lsafer.util.AbstractStructure;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * a structure get data about custom stems.
+ * A structure contains properties of a {@link Controller}.
+ *
+ * <ul>
+ * <li>
+ * <b>Class Description</b> [_<font color="blue">MyClass</font>__description]
+ * <br>
+ * {@link #Properties(Resources, Class, Object)}
+ * </li>
+ * <li>
+ * <b>Entry Description</b> [_<font color="blue">MyClass</font>__<font color="blue">MyNode</font>__description]
+ * <br>
+ * {@link Entry#Entry(Resources, Class, Object, Field)}
+ * </li>
+ * <li>
+ * <b>Entry Value Description</b> [_<font color="blue">MyClass</font>__<font color="blue">MyNode</font>__values__description]
+ * <br>
+ * {@link Entry#Entry(Resources, Class, Object, Field)}
+ * </li>
+ * <li>
+ * <b>Invokable Description</b> [_<font color="blue">MyClass</font>__<font color="blue">MyInvokable</font>__description]
+ * <br>
+ * {@link Invokable#Invokable(Resources, Class, Object, Method)}
+ * </li>
+ * <li>
+ * <b>Invokable Parameter Description</b> [_<font color="blue">MyClass</font>__<font color="blue">MyInvokable</font>__parameters__description]
+ * <br>
+ * {@link Invokable#Invokable(Resources, Class, Object, Method)}
+ * </li>
+ * </ul>
  *
  * @author LSaferSE
- * @version 2
+ * @version 5 release (07-Sep-2019)
  * @since 11-Jun-2019
  */
 @SuppressWarnings("WeakerAccess")
-public class Properties extends AbstractStructure {
-
+public class Properties extends HashStructure {
     /**
-     * class's description.
+     * Controller's description.
      */
-    public String description;
+    public String description = "";
 
     /**
-     * fields of the class.
+     * Available {@link lsafer.services.annotation.Entry entries} in the targeted {@link Controller}.
      */
-    public Field[] fields;
+    public Map<String, Entry> entries = new HashMap<>();
 
     /**
-     * methods to invoke inside the class.
+     * Available {@link lsafer.services.annotation.Invokable invokables} in the targeted {@link Controller}.
      */
-    public Method[] methods;
+    public Map<String, Invokable> invokables = new HashMap<>();
 
     /**
-     * name of the class.
+     * The Name of the targeted {@link Controller}.
      */
-    public String name;
+    public String name = "";
 
     /**
-     * permission the class needs.
-     */
-    public String[] permissions;
-
-    /**
-     * default constructor.
+     * Default constructor.
      */
     public Properties() {
-
     }
 
     /**
-     * load data from the given class.
+     * Load data from the given {@link Controller}.
      *
-     * @param object to load data of
+     * <ul>
+     * <li>note: the given object SHOULD be annotated with {@link Controller}.</li>
+     * </ul>
+     *
+     * @param resources to get strings from
+     * @param R_string  to find strings IDs from
+     * @param object    to load data of
      */
-    public Properties(Object object) {
-        Class<?> klass = object.getClass();
-        Description description = klass.getAnnotation(Description.class);
-        Permissions permissions = klass.getAnnotation(Permissions.class);
-        java.lang.reflect.Field[] fields = klass.getDeclaredFields();
-        java.lang.reflect.Method[] methods = klass.getDeclaredMethods();
+    public Properties(Resources resources, Class R_string, Object object) {
+        Controller annotation = object.getClass().getAnnotation(Controller.class);
+        assert annotation != null;
 
-        this.name = klass.getName();
+        String descResId = annotation.descriptionId();
 
-        if (permissions != null) {
-            this.permissions = permissions.value();
-        }
+        this.name = object.getClass().getName();
 
-        if (description != null) {
-            this.description = description.value();
+        try {
+            this.description = resources.getString((int) R_string.getField(
+                    descResId.equals("") ? "_" + object.getClass().getSimpleName() + "__description" : descResId
+            ).get(null));
+        } catch (Exception ignored) {
         }
 
         //declaring fields
-        this.fields = new Field[fields.length];
-        for (int i = 0; i < fields.length; i++)
-            this.fields[i] = new Field(fields[i], object);
+        for (Field field : object.getClass().getDeclaredFields())
+            if (field.isAnnotationPresent(lsafer.services.annotation.Entry.class))
+                this.entries.put(field.getName(), new Entry(resources, R_string, object, field));
 
         //declaring methods
-        this.methods = new Method[methods.length];
-        for (int i = 0; i < methods.length; i++)
-            this.methods[i] = new Method(methods[i]);
+        for (Method method : object.getClass().getDeclaredMethods())
+            if (method.isAnnotationPresent(lsafer.services.annotation.Invokable.class))
+                this.invokables.put(method.getName(), new Invokable(resources, R_string, object, method));
     }
 
     /**
-     * a structure to review data about task part's field.
+     * A structure contains properties of an {@link lsafer.services.annotation.Entry}.
      */
-    public static class Field extends AbstractStructure {
+    public static class Entry extends HashStructure {
+        /**
+         * The default value of the targeted {@link lsafer.services.annotation.Entry}.
+         */
+        public Object defaultValue = "";
 
         /**
-         * default value of the field.
+         * The description for the targeted {@link lsafer.services.annotation.Entry}.
          */
-        public Object defaultValue = null;
+        public String description = "";
 
         /**
-         * description of the field.
+         * The name of the targeted {@link lsafer.services.annotation.Entry}.
          */
-        public String description;
+        public String name = "";
 
         /**
-         * name of the field.
+         * The type of this entry's value.
          */
-        public String name;
+        public Class type = Object.class;
 
         /**
-         * allowed values of the field.
+         * Proper values for the targeted {@link lsafer.services.annotation.Entry}.
          */
-        public Value[] values;
+        public List<Value> values = new ArrayList<>();
 
         /**
-         * default constructor.
+         * Default constructor.
          */
-        public Field() {
-
+        public Entry() {
         }
 
         /**
-         * fill this with the given field's properties.
+         * Load data from the given {@link lsafer.services.annotation.Entry}.
          *
-         * @param field  to get data from
-         * @param object to get default value from
+         * @param resources to get resources from
+         * @param R_string  to navigate Ids from
+         * @param object    to get default value from
+         * @param field     to get data from
          */
-        public Field(java.lang.reflect.Field field, Object object) {
-            Description description = field.getAnnotation(Description.class);
-            Values values = field.getAnnotation(Values.class);
+        public Entry(Resources resources, Class R_string, Object object, Field field) {
+            lsafer.services.annotation.Entry entry = field.getAnnotation(lsafer.services.annotation.Entry.class);
+            assert entry != null;
+
+            String[] values = entry.value();
+            String descResId = entry.descriptionId();
+            String valuesDescResId = entry.valuesDescriptionId();
+
+            String[] descriptions = {};
 
             this.name = field.getName();
+            this.type = field.getType();
 
             try {
                 this.defaultValue = field.get(object);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (IllegalAccessException ignored) {
+            }
+            try {
+                this.description = resources.getString((int) R_string.getField(
+                        descResId.equals("") ? "_" + object.getClass().getSimpleName() + "__" + field.getName() +
+                                               "__description" : descResId
+                ).get(null));
+            } catch (Exception ignored) {
+            }
+            try {
+                descriptions = resources.getStringArray((int) R_string.getField(
+                        valuesDescResId.equals("") ? "_" + object.getClass().getSimpleName() + "__" + field.getName() +
+                                                     "__values__description" : valuesDescResId
+                ).get(null));
+            } catch (Exception ignored) {
             }
 
-            if (description != null) {
-                this.description = description.value();
-            }
-
-            if (values != null) {
-                String[] v = values.value();
-                this.values = new Value[v.length];
-                for (int i = 0; i < v.length; i++)
-                    this.values[i] = new Value(v[i]);
-            }
+            for (int i = 0; i < values.length; i++)
+                this.values.add(new Value(values[i], descriptions.length > i ? descriptions[i] : ""));
         }
 
         /**
-         * a structure to review data about task part field's value.
+         * A structure contains properties of an {@link lsafer.services.annotation.Entry}'s proper value.
          */
-        public static class Value extends AbstractStructure {
-
+        public static class Value extends HashStructure {
             /**
-             * description of the value.
+             * The description for this {@link Value}.
              */
-            public String description;
+            public String description = "";
 
             /**
-             * name of the value.
+             * The name ("value") of this {@link Value}.
              */
-            public Object name;
+            public String name = "";
 
             /**
-             * default constructor.
+             * Default constructor.
              */
             public Value() {
             }
 
             /**
-             * fill this with the given value source.
+             * Load this from the given data.
              *
-             * @param source to get data from
+             * @param description of this value
+             * @param name        to get data from
              */
-            public Value(String source) {
-                String[] s = source.split("[|]");
-
-                if (s.length > 0) {
-                    this.name = JSON.parse(s[0]);
-                }
-
-                if (s.length > 1) {
-                    this.description = s[1];
-                }
+            public Value(String name, String description) {
+                this.name = name;
+                this.description = description;
             }
         }
-
     }
 
     /**
-     * a structure to review data about task part's method.
+     * A structure contains properties of an {@link lsafer.services.annotation.Invokable}.
      */
-    public static class Method extends AbstractStructure {
+    public static class Invokable extends HashStructure {
+        /**
+         * Invokable's description.
+         */
+        public String description = "";
 
         /**
-         * description of the method.
+         * The name of the targeted {@link lsafer.services.annotation.Invokable}.
          */
-        public String description;
+        public String name = "";
 
         /**
-         * arguments that must be passed to the method.
+         * Parameters of the targeted {@link lsafer.services.annotation.Invokable}.
          */
-        public String[] input;
+        public List<Parameter> parameters = new ArrayList<>();
 
         /**
-         * name of the method.
+         * Default constructor.
          */
-        public String name;
-
-        /**
-         * arguments that well be returned from the method.
-         */
-        public String[] output;
-
-        /**
-         * init this.
-         */
-        public Method() {
+        public Invokable() {
         }
 
         /**
-         * fill this with the given method's properties.
+         * Load data from the given {@link lsafer.services.annotation.Invokable}.
          *
-         * @param method to get data from
+         * @param resources to get strings from
+         * @param R_string  to find strings IDs from
+         * @param object    to load data of
+         * @param method    to get data from
          */
-        public Method(java.lang.reflect.Method method) {
-            Parameters parameters = method.getAnnotation(Parameters.class);
-            Description description = method.getAnnotation(Description.class);
+        public Invokable(Resources resources, Class R_string, Object object, Method method) {
+            lsafer.services.annotation.Invokable annotation = method.getAnnotation(lsafer.services.annotation.Invokable.class);
+            assert annotation != null;
+
+            String descResId = annotation.DescriptionId();
+            String[] parameters = annotation.value();
+            String[] defaults = annotation.defaults();
+            String paramsDescResId = annotation.paramsDescriptionId();
+
+            Class[] types = method.getParameterTypes();
+
+            String[] descriptions = {};
 
             this.name = method.getName();
 
-            if (description != null) {
-                this.description = description.value();
+            try {
+                this.description = resources.getString((int) R_string.getField(
+                        descResId.equals("") ? "_" + object.getClass().getSimpleName() + "__" + method.getName() +
+                                               "__description" : descResId
+                ).get(null));
+            } catch (Exception ignored) {
             }
 
-            if (parameters != null) {
-                this.input = parameters.input();
-                this.output = parameters.output();
+            try {
+                descriptions = resources.getStringArray((int) R_string.getField(
+                        paramsDescResId.equals("") ? "_" + object.getClass().getSimpleName() + "__" + method.getName() +
+                                                     "__parameters__description" : paramsDescResId
+                ).get(null));
+            } catch (Exception ignored) {
             }
+
+            for (int i = 0; i < types.length; i++)
+                this.parameters.add(new Parameter(types[i],
+                        parameters.length > i ? parameters[i] : "",
+                        defaults.length > i ? defaults[i] : "",
+                        descriptions.length > i ? descriptions[i] : ""));
         }
 
-    }
+        /**
+         * A structure contains properties of an {@link lsafer.services.annotation.Invokable}'s Parameter.
+         */
+        public static class Parameter extends HashStructure {
+            /**
+             * The default value of this {@link Parameter}.
+             */
+            public String defaultValue = "";
 
+            /**
+             * The Description for this {@link Parameter}.
+             */
+            public String description = "";
+
+            /**
+             * The targeted key from this {@link Parameter}.
+             */
+            public String key = "";
+
+            /**
+             * The type of this parameter's value.
+             */
+            public Class type = Object.class;
+
+            /**
+             * Default constructor.
+             */
+            public Parameter() {
+            }
+
+            /**
+             * Load this from the given data.
+             *
+             * @param type         of the value of this parameter
+             * @param key          of this parameter
+             * @param defaultValue to set this parameter to (case no value passed)
+             * @param description  of this parameter
+             */
+            public Parameter(Class type, String key, String defaultValue, String description) {
+                this.defaultValue = defaultValue;
+                this.key = key;
+                this.type = type;
+                this.description = description;
+            }
+        }
+    }
 }
