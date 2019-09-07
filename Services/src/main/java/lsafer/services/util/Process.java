@@ -11,6 +11,7 @@ import lsafer.services.annotation.Controller;
 import lsafer.services.annotation.Entry;
 import lsafer.services.annotation.Invokable;
 import lsafer.services.io.Chain;
+import lsafer.util.Arrays;
 import lsafer.util.HashStructure;
 
 import java.lang.reflect.Method;
@@ -20,7 +21,7 @@ import java.lang.reflect.Method;
  *
  * @param <S> the type of the service linked to this
  * @author LSaferSE
- * @version 2 alpha (06-Sep-2019)
+ * @version 3 alpha (07-Sep-2019)
  * @see R.string#_Process__description
  * @since 14-Jul-19
  */
@@ -31,20 +32,24 @@ public class Process<S extends Service> extends HashStructure {
      * The chain that this process is attached to.
      */
     public transient Chain chain;
+
     /**
      * The index of this.
      */
     @Destructed
     public Integer index;
+
     /**
      * The key of this process to be recognized from it's {@link Service service}.
      */
     @Destructed
     public String key;
+
     /**
      * The service that this process is attached to.
      */
     public transient S service;
+
     /**
      * The class name to dedicate what the service that launches this process.
      *
@@ -52,6 +57,7 @@ public class Process<S extends Service> extends HashStructure {
      */
     @Entry
     public String service_class;
+
     /**
      * The package/application name that contains the service that launches this process.
      *
@@ -163,11 +169,11 @@ public class Process<S extends Service> extends HashStructure {
     public void invoke(String method, Arguments arguments) {
         String TAG = this.get(String.class, "TAG", () -> this.getClass().getName());
 
-        for (Method method1 : this.getClass().getMethods())
-            if (method1.isAnnotationPresent(Invokable.class) && method1.getName().equals(method))
+        for (Method method1 : this.getClass().getMethods()) {
+            Invokable annotation = method1.getAnnotation(Invokable.class);
+
+            if (annotation != null && (method1.getName().equals(method) || Arrays.any(annotation.redirect(), method)))
                 try {
-                    Invokable annotation = method1.getAnnotation(Invokable.class);
-                    assert annotation != null;
 
                     Class<Object>[] types = (Class<Object>[]) method1.getParameterTypes();
                     String[] keys = annotation.value();
@@ -186,6 +192,7 @@ public class Process<S extends Service> extends HashStructure {
                     Log.e(TAG, "invoke: unable to invoke method [" + method + "] with arguments " + arguments, e);
                     return;
                 }
+        }
 
         Log.e(TAG, "invoke: can't find method [" + method + "]");
     }

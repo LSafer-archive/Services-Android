@@ -146,7 +146,8 @@ public class Service<P extends Process> extends android.app.Service {
             e.printStackTrace();
         }
 
-        if (annotation != null && R_string != null && callBackPackage != null && callBackClass != null && request != null)
+        if (annotation != null && R_string != null && callBackPackage != null && callBackClass != null &&
+            request != null)
             try {
                 Process process = annotation.process().newInstance();
 

@@ -6,10 +6,7 @@ import lsafer.util.HashStructure;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A structure contains properties of a {@link Controller}.
@@ -43,7 +40,7 @@ import java.util.Map;
  * </ul>
  *
  * @author LSaferSE
- * @version 5 release (07-Sep-2019)
+ * @version 6 release (07-Sep-2019)
  * @since 11-Jun-2019
  */
 @SuppressWarnings("WeakerAccess")
@@ -85,11 +82,13 @@ public class Properties extends HashStructure {
      * @param R_string  to find strings IDs from
      * @param object    to load data of
      */
-    public Properties(Resources resources, Class R_string, Object object) {
+    public Properties(Resources resources, Class<?> R_string, Object object) {
         Controller annotation = object.getClass().getAnnotation(Controller.class);
         assert annotation != null;
 
         String descResId = annotation.descriptionId();
+
+        String[] descriptions = {};
 
         this.name = object.getClass().getName();
 
@@ -154,7 +153,7 @@ public class Properties extends HashStructure {
          * @param object    to get default value from
          * @param field     to get data from
          */
-        public Entry(Resources resources, Class R_string, Object object, Field field) {
+        public Entry(Resources resources, Class<?> R_string, Object object, Field field) {
             lsafer.services.annotation.Entry entry = field.getAnnotation(lsafer.services.annotation.Entry.class);
             assert entry != null;
 
@@ -243,6 +242,11 @@ public class Properties extends HashStructure {
         public List<Parameter> parameters = new ArrayList<>();
 
         /**
+         * Method names to be redirected to the targeted invokable method.
+         */
+        public List<String> redirect = new ArrayList<>();
+
+        /**
          * Default constructor.
          */
         public Invokable() {
@@ -256,13 +260,13 @@ public class Properties extends HashStructure {
          * @param object    to load data of
          * @param method    to get data from
          */
-        public Invokable(Resources resources, Class R_string, Object object, Method method) {
+        public Invokable(Resources resources, Class<?> R_string, Object object, Method method) {
             lsafer.services.annotation.Invokable annotation = method.getAnnotation(lsafer.services.annotation.Invokable.class);
             assert annotation != null;
 
-            String descResId = annotation.DescriptionId();
             String[] parameters = annotation.value();
             String[] defaults = annotation.defaults();
+            String descResId = annotation.DescriptionId();
             String paramsDescResId = annotation.paramsDescriptionId();
 
             Class[] types = method.getParameterTypes();
@@ -270,6 +274,7 @@ public class Properties extends HashStructure {
             String[] descriptions = {};
 
             this.name = method.getName();
+            this.redirect.addAll(Arrays.asList(annotation.redirect()));
 
             try {
                 this.description = resources.getString((int) R_string.getField(

@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * Annotate that the target is a controller that can contains an {@link Entry entries} and {@link Invokable invokables}.
  *
  * @author LSaferSE
- * @version 2 alpha (06-Sep-2019)
+ * @version 3 alpha (07-Sep-2019)
  * @since 27-Aug-19
  */
 @Retention(RetentionPolicy.RUNTIME)

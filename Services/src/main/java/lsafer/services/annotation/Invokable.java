@@ -8,7 +8,7 @@ import java.lang.annotation.*;
  * Annotate that the target is an Invokable.
  *
  * @author LSaferSE
- * @version 2 (06-Sep-2019)
+ * @version 3 (07-Sep-2019)
  * @since 27-Jun-19
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -63,6 +63,13 @@ public @interface Invokable {
      * @return the absolute description ID name for this invokable's params
      */
     String paramsDescriptionId() default "";
+
+    /**
+     * Method names to be redirected to the targeted invokable method.
+     *
+     * @return what methods to redirect to the targeted method
+     */
+    String[] redirect() default {};
 
     /**
      * The targeted key for each parameter of the targeted method.
