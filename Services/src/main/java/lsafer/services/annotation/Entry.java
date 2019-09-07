@@ -1,5 +1,8 @@
 package lsafer.services.annotation;
 
+import androidx.annotation.ArrayRes;
+import androidx.annotation.StringRes;
+
 import java.lang.annotation.*;
 
 /**
@@ -18,7 +21,8 @@ public @interface Entry {
      *
      * @return the absolute description ID name for this
      */
-    String descriptionId() default "";
+    @StringRes
+    int description() default 0;
 
     /**
      * The type of the editor that suppose to edit the targeted entry.
@@ -39,5 +43,6 @@ public @interface Entry {
      *
      * @return the absolute description ID name for this entry's values
      */
-    String valuesDescriptionId() default "";
+    @ArrayRes
+    int values_description() default 0;
 }

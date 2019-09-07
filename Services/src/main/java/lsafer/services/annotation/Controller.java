@@ -1,5 +1,7 @@
 package lsafer.services.annotation;
 
+import androidx.annotation.StringRes;
+
 import java.lang.annotation.*;
 
 /**
@@ -18,5 +20,6 @@ public @interface Controller {
      *
      * @return the absolute description ID name for this
      */
-    String descriptionId() default "";
+    @StringRes
+    int description() default 0;
 }

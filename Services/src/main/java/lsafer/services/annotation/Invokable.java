@@ -1,5 +1,7 @@
 package lsafer.services.annotation;
 
+import androidx.annotation.ArrayRes;
+import androidx.annotation.StringRes;
 import lsafer.services.util.Process;
 
 import java.lang.annotation.*;
@@ -44,13 +46,6 @@ public @interface Invokable {
     String update = "update";
 
     /**
-     * The absolute name of the field that contains the description Id for this.
-     *
-     * @return the absolute description ID name for this
-     */
-    String DescriptionId() default "";
-
-    /**
      * The default parameter values for this invokable.
      *
      * @return the default parameter values for this
@@ -58,11 +53,20 @@ public @interface Invokable {
     String[] defaults() default {""};
 
     /**
+     * The absolute name of the field that contains the description Id for this.
+     *
+     * @return the absolute description ID name for this
+     */
+    @StringRes
+    int description() default 0;
+
+    /**
      * The absolute name of the field that contains the description Id for this invokable's params.
      *
      * @return the absolute description ID name for this invokable's params
      */
-    String paramsDescriptionId() default "";
+    @ArrayRes
+    int params_description() default 0;
 
     /**
      * Method names to be redirected to the targeted invokable method.

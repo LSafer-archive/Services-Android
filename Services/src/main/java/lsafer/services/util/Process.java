@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
  * @param <S> the type of the service linked to this
  * @author LSaferSE
  * @version 3 alpha (07-Sep-2019)
- * @see R.string#_Process__description
  * @since 14-Jul-19
  */
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue"})
@@ -201,10 +200,9 @@ public class Process<S extends Service> extends HashStructure {
      * Get a {@link Properties} of this.
      *
      * @param resources to get strings from
-     * @param R_string  to get IDs from
      * @return a properties of this
      */
-    public Properties properties(Resources resources, Class R_string) {
-        return new Properties(resources, R_string, this);
+    public Properties properties(Resources resources) {
+        return new Properties(resources, this);
     }
 }

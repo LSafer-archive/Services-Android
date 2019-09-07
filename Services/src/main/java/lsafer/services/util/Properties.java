@@ -11,34 +11,6 @@ import java.util.*;
 /**
  * A structure contains properties of a {@link Controller}.
  *
- * <ul>
- * <li>
- * <b>Class Description</b> [_<font color="blue">MyClass</font>__description]
- * <br>
- * {@link #Properties(Resources, Class, Object)}
- * </li>
- * <li>
- * <b>Entry Description</b> [_<font color="blue">MyClass</font>__<font color="blue">MyNode</font>__description]
- * <br>
- * {@link Entry#Entry(Resources, Class, Object, Field)}
- * </li>
- * <li>
- * <b>Entry Value Description</b> [_<font color="blue">MyClass</font>__<font color="blue">MyNode</font>__values__description]
- * <br>
- * {@link Entry#Entry(Resources, Class, Object, Field)}
- * </li>
- * <li>
- * <b>Invokable Description</b> [_<font color="blue">MyClass</font>__<font color="blue">MyInvokable</font>__description]
- * <br>
- * {@link Invokable#Invokable(Resources, Class, Object, Method)}
- * </li>
- * <li>
- * <b>Invokable Parameter Description</b> [_<font color="blue">MyClass</font>__<font color="blue">MyInvokable</font>__parameters__description]
- * <br>
- * {@link Invokable#Invokable(Resources, Class, Object, Method)}
- * </li>
- * </ul>
- *
  * @author LSaferSE
  * @version 6 release (07-Sep-2019)
  * @since 11-Jun-2019
@@ -79,35 +51,26 @@ public class Properties extends HashStructure {
      * </ul>
      *
      * @param resources to get strings from
-     * @param R_string  to find strings IDs from
      * @param object    to load data of
      */
-    public Properties(Resources resources, Class<?> R_string, Object object) {
+    public Properties(Resources resources,  Object object) {
         Controller annotation = object.getClass().getAnnotation(Controller.class);
         assert annotation != null;
 
-        String descResId = annotation.descriptionId();
-
-        String[] descriptions = {};
+        int descRes = annotation.description();
 
         this.name = object.getClass().getName();
-
-        try {
-            this.description = resources.getString((int) R_string.getField(
-                    descResId.equals("") ? "_" + object.getClass().getSimpleName() + "__description" : descResId
-            ).get(null));
-        } catch (Exception ignored) {
-        }
+        this.description = descRes == 0 ? "" : resources.getString(descRes);
 
         //declaring fields
         for (Field field : object.getClass().getDeclaredFields())
             if (field.isAnnotationPresent(lsafer.services.annotation.Entry.class))
-                this.entries.put(field.getName(), new Entry(resources, R_string, object, field));
+                this.entries.put(field.getName(), new Entry(resources, object, field));
 
         //declaring methods
         for (Method method : object.getClass().getDeclaredMethods())
             if (method.isAnnotationPresent(lsafer.services.annotation.Invokable.class))
-                this.invokables.put(method.getName(), new Invokable(resources, R_string, object, method));
+                this.invokables.put(method.getName(), new Invokable(resources, object, method));
     }
 
     /**
@@ -149,40 +112,26 @@ public class Properties extends HashStructure {
          * Load data from the given {@link lsafer.services.annotation.Entry}.
          *
          * @param resources to get resources from
-         * @param R_string  to navigate Ids from
          * @param object    to get default value from
          * @param field     to get data from
          */
-        public Entry(Resources resources, Class<?> R_string, Object object, Field field) {
-            lsafer.services.annotation.Entry entry = field.getAnnotation(lsafer.services.annotation.Entry.class);
-            assert entry != null;
+        public Entry(Resources resources, Object object, Field field) {
+            lsafer.services.annotation.Entry annotation = field.getAnnotation(lsafer.services.annotation.Entry.class);
+            assert annotation != null;
 
-            String[] values = entry.value();
-            String descResId = entry.descriptionId();
-            String valuesDescResId = entry.valuesDescriptionId();
+            int valuesDescRes = annotation.values_description();
+            int descRes = annotation.description();
 
-            String[] descriptions = {};
+            String[] values = annotation.value();
+            String[] descriptions = valuesDescRes == 0 ? new String[0] : resources.getStringArray(valuesDescRes);
 
             this.name = field.getName();
             this.type = field.getType();
+            this.description = descRes == 0 ? "" : resources.getString(descRes);
 
             try {
                 this.defaultValue = field.get(object);
             } catch (IllegalAccessException ignored) {
-            }
-            try {
-                this.description = resources.getString((int) R_string.getField(
-                        descResId.equals("") ? "_" + object.getClass().getSimpleName() + "__" + field.getName() +
-                                               "__description" : descResId
-                ).get(null));
-            } catch (Exception ignored) {
-            }
-            try {
-                descriptions = resources.getStringArray((int) R_string.getField(
-                        valuesDescResId.equals("") ? "_" + object.getClass().getSimpleName() + "__" + field.getName() +
-                                                     "__values__description" : valuesDescResId
-                ).get(null));
-            } catch (Exception ignored) {
             }
 
             for (int i = 0; i < values.length; i++)
@@ -256,41 +205,24 @@ public class Properties extends HashStructure {
          * Load data from the given {@link lsafer.services.annotation.Invokable}.
          *
          * @param resources to get strings from
-         * @param R_string  to find strings IDs from
          * @param object    to load data of
          * @param method    to get data from
          */
-        public Invokable(Resources resources, Class<?> R_string, Object object, Method method) {
+        public Invokable(Resources resources, Object object, Method method) {
             lsafer.services.annotation.Invokable annotation = method.getAnnotation(lsafer.services.annotation.Invokable.class);
             assert annotation != null;
 
+            int paramsDescRes = annotation.params_description();
+            int descRes = annotation.description();
+
             String[] parameters = annotation.value();
             String[] defaults = annotation.defaults();
-            String descResId = annotation.DescriptionId();
-            String paramsDescResId = annotation.paramsDescriptionId();
-
             Class[] types = method.getParameterTypes();
-
-            String[] descriptions = {};
+            String[] descriptions = paramsDescRes == 0 ? new String[0] : resources.getStringArray(paramsDescRes);
 
             this.name = method.getName();
             this.redirect.addAll(Arrays.asList(annotation.redirect()));
-
-            try {
-                this.description = resources.getString((int) R_string.getField(
-                        descResId.equals("") ? "_" + object.getClass().getSimpleName() + "__" + method.getName() +
-                                               "__description" : descResId
-                ).get(null));
-            } catch (Exception ignored) {
-            }
-
-            try {
-                descriptions = resources.getStringArray((int) R_string.getField(
-                        paramsDescResId.equals("") ? "_" + object.getClass().getSimpleName() + "__" + method.getName() +
-                                                     "__parameters__description" : paramsDescResId
-                ).get(null));
-            } catch (Exception ignored) {
-            }
+            this.description = descRes == 0 ? "" : resources.getString(descRes);
 
             for (int i = 0; i < types.length; i++)
                 this.parameters.add(new Parameter(types[i],

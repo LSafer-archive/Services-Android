@@ -138,15 +138,7 @@ public class Service<P extends Process> extends android.app.Service {
         String callBackPackage = intent.getStringExtra("callBackPackage");
         String request = intent.getStringExtra("request");
 
-        Class<?> R_string = null;
-
-        try {
-            R_string = Class.forName(this.getPackageName() + ".R$string");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        if (annotation != null && R_string != null && callBackPackage != null && callBackClass != null &&
+        if (annotation != null && callBackPackage != null && callBackClass != null &&
             request != null)
             try {
                 Process process = annotation.process().newInstance();
@@ -158,7 +150,7 @@ public class Service<P extends Process> extends android.app.Service {
                         .setClassName(callBackPackage, callBackClass)
                         .putExtra("mode", "result")
                         .putExtra("request", request)
-                        .putExtra("properties", process.properties(this.getResources(), R_string));
+                        .putExtra("properties", process.properties(this.getResources()));
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     this.startForegroundService(callBackIntent);

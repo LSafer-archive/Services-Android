@@ -29,7 +29,7 @@ final public class Chain extends JSONFileStructure {
      * @see R.string#_Chain__activated__description
      * @see R.array#_Chain__activated__values__description
      */
-    @Entry({"true", "false"})
+    @Entry(value = {"true", "false"})
     public Boolean activated = false;
 
     /**
@@ -80,10 +80,9 @@ final public class Chain extends JSONFileStructure {
      * Get the a {@link Properties} of this.
      *
      * @param resources to get strings from
-     * @param R_string  to get IDs from
      * @return this chain's properties
      */
-    public Properties properties(Resources resources, Class R_string) {
-        return new Properties(resources, R_string, this);
+    public Properties properties(Resources resources) {
+        return new Properties(resources, this);
     }
 }
