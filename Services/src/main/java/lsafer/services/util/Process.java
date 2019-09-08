@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.util.Log;
-import lsafer.services.R;
 import lsafer.services.annotation.Controller;
 import lsafer.services.annotation.Entry;
 import lsafer.services.annotation.Invokable;
@@ -51,16 +50,12 @@ public class Process<S extends Service> extends HashStructure {
 
     /**
      * The class name to dedicate what the service that launches this process.
-     *
-     * @see R.string#_Process__service_class__description
      */
     @Entry
     public String service_class;
 
     /**
      * The package/application name that contains the service that launches this process.
-     *
-     * @see R.string#_Process__service_package__description
      */
     @Entry
     public String service_package;

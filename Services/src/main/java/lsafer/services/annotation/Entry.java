@@ -29,7 +29,7 @@ public @interface Entry {
      *
      * @return the targeted entry's editor type
      */
-    String editorType() default "JSON";
+    String editor() default "JSON";
 
     /**
      * An array of proper values for this entry.

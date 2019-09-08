@@ -53,7 +53,7 @@ public class Properties extends HashStructure {
      * @param resources to get strings from
      * @param object    to load data of
      */
-    public Properties(Resources resources,  Object object) {
+    public Properties(Resources resources, Object object) {
         Controller annotation = object.getClass().getAnnotation(Controller.class);
         assert annotation != null;
 
@@ -93,6 +93,11 @@ public class Properties extends HashStructure {
         public String name = "";
 
         /**
+         * What editor should edit this entry. And how should the editor do it.
+         */
+        public String editor = "";
+
+        /**
          * The type of this entry's value.
          */
         public Class type = Object.class;
@@ -127,6 +132,7 @@ public class Properties extends HashStructure {
 
             this.name = field.getName();
             this.type = field.getType();
+            this.editor = annotation.editor();
             this.description = descRes == 0 ? "" : resources.getString(descRes);
 
             try {

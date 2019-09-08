@@ -54,7 +54,7 @@ final public class PropertiesGatherer extends Service {
         if (PropertiesGatherer.listeners.size() == 0)
             this.stopSelf();
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     /**

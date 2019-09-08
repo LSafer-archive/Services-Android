@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import lsafer.io.FileStructure;
 import lsafer.io.JSONFileStructure;
-import lsafer.services.R;
 import lsafer.services.annotation.Controller;
 import lsafer.services.annotation.Entry;
 import lsafer.services.util.Arguments;
@@ -17,7 +16,6 @@ import lsafer.util.ArrayStructure;
  *
  * @author LSaferSE
  * @version 2 release (06-Sep-2019)
- * @see R.string#_Chain__description
  * @since 14-Jul-19
  */
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "FieldCanBeLocal"})
@@ -25,9 +23,6 @@ import lsafer.util.ArrayStructure;
 final public class Chain extends JSONFileStructure {
     /**
      * Whether this task is activated or not.
-     *
-     * @see R.string#_Chain__activated__description
-     * @see R.array#_Chain__activated__values__description
      */
     @Entry(value = {"true", "false"})
     public Boolean activated = false;
