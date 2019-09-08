@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
  * @version 3 alpha (07-Sep-2019)
  * @since 14-Jul-19
  */
-@SuppressWarnings({"WeakerAccess", "UnusedReturnValue"})
+@SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused"})
 @Controller
 public class Process<S extends Service> extends HashStructure {
     /**
@@ -105,6 +105,7 @@ public class Process<S extends Service> extends HashStructure {
      * Start the service that suppose to launch this process (that matches the {@link #service_package} and {@link #service_class} of this).
      *
      * @param context   to start the service
+     * @param chain     just in case no chain have been attached to this
      * @param action    what the service should do
      *                  {@link Service#ACTION_INVOKE invoke}
      *                  {@link Service#ACTION_SHUTDOWN shutdown}
@@ -115,11 +116,11 @@ public class Process<S extends Service> extends HashStructure {
      *                  {@link Invokable#get get}
      * @param arguments to pass to the targeted method
      */
-    public void call(Context context, String action, String method, Arguments arguments) {
+    public void call(Context context, Chain chain, String action, String method, Arguments arguments) {
         Intent intent = new Intent(action);
 
         intent.putExtra("process", this);
-        intent.putExtra("chain", this.chain);
+        intent.putExtra("chain", this.chain == null ? chain : this.chain);
         intent.putExtra("method", method);
         intent.putExtra("arguments", arguments);
 
@@ -132,7 +133,7 @@ public class Process<S extends Service> extends HashStructure {
     }
 
     /**
-     * Invoke method {@link #call(Context, String, String, Arguments)} on the next process of this.
+     * Invoke method {@link #call(Context, Chain, String, String, Arguments)} on the next process of this.
      *
      * @param action    for the next process's service
      * @param method    to invoke
@@ -143,7 +144,7 @@ public class Process<S extends Service> extends HashStructure {
     }
 
     /**
-     * Invoke method {@link #call(Context, String, String, Arguments)} on previous process of this.
+     * Invoke method {@link #call(Context, Chain, String, String, Arguments)} on previous process of this.
      *
      * @param action    for the next process's service
      * @param method    to invoke

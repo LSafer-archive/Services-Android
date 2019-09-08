@@ -18,7 +18,7 @@ import lsafer.util.ArrayStructure;
  * @version 2 release (06-Sep-2019)
  * @since 14-Jul-19
  */
-@SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "FieldCanBeLocal"})
+@SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "FieldCanBeLocal", "unused"})
 @Controller
 final public class Chain extends JSONFileStructure {
     /**
@@ -52,7 +52,7 @@ final public class Chain extends JSONFileStructure {
      */
     public <C extends Chain> C call(Context context, int index, String action, String method, Arguments arguments) {
         if (index > -1 && index < this.processes.size())
-            this.processes.<Process>get(index).call(context, action, method, arguments);
+            this.processes.<Process>get(index).call(context, this, action, method, arguments);
         return (C) this;
     }
 
@@ -67,7 +67,7 @@ final public class Chain extends JSONFileStructure {
      * @return this
      */
     public <C extends Chain> C callAll(Context context, String action, String method, Arguments arguments) {
-        this.processes.list(Process.class).forEach(process -> process.call(context, action, method, arguments));
+        this.processes.list(Process.class).forEach(process -> process.call(context, this, action, method, arguments));
         return (C) this;
     }
 

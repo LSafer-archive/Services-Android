@@ -13,6 +13,7 @@ import java.lang.annotation.*;
  * @version 3 (07-Sep-2019)
  * @since 27-Jun-19
  */
+@SuppressWarnings("unused")
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Inherited

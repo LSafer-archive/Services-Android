@@ -26,6 +26,7 @@ import java.util.Map;
  * @version 2 alpha (06-Sep-19)
  * @since 16-Aug-19
  */
+@SuppressWarnings("unused")
 @Service.Defaults
 public class Service<P extends Process> extends android.app.Service {
 

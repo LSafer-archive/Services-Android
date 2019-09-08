@@ -15,7 +15,7 @@ import java.util.*;
  * @version 6 release (07-Sep-2019)
  * @since 11-Jun-2019
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Properties extends HashStructure {
     /**
      * Controller's description.

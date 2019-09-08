@@ -11,6 +11,7 @@ import lsafer.services.util.Arguments;
  * @version 2 release (07-Sep-2019)
  * @since 14-Jul-19
  */
+@SuppressWarnings("unused")
 @FolderStructure.Defaults(folder = Profile.class)
 final public class Profiles extends FolderStructure {
     /**
